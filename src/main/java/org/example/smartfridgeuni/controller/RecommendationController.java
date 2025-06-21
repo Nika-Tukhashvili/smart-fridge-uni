@@ -53,20 +53,6 @@ public class RecommendationController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/for-ingredient/{ingredientName}")
-    @Operation(summary = "Get recipes for specific ingredient",
-            description = "Get recipe recommendations that use a specific ingredient")
-    public ResponseEntity<ApiResponseDTO<List<RecipeRecommendationDTO>>> getRecipesForIngredient(
-            @Parameter(description = "Name of the ingredient") @PathVariable String ingredientName) {
-
-        log.info("Received request for recipes using ingredient: {}", ingredientName);
-
-        List<RecipeRecommendationDTO> recommendations = recommendationService
-                .getRecipesForIngredient(ingredientName);
-
-        ApiResponseDTO<List<RecipeRecommendationDTO>> response = ApiResponseDTO.success(recommendations);
-        return ResponseEntity.ok(response);
-    }
 
     @GetMapping("/expiration-summary")
     @Operation(summary = "Get expiration summary",

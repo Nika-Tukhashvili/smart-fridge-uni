@@ -34,16 +34,6 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecipeSummaryDTO> getAllRecipesSummary() {
-        log.info("Retrieving all recipes summary");
-
-        List<Recipe> recipes = recipeRepository.findAllByOrderByCreatedDateDesc();
-        return recipes.stream()
-                .map(this::convertToSummaryDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
     public Optional<RecipeDTO> getRecipeById(Long id) {
         log.info("Retrieving recipe with ID: {}", id);
 
@@ -96,20 +86,10 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecipeSummaryDTO> searchRecipes(String name) {
+    public List<RecipeSummaryDTO> searchRecipes(String name, Integer prepTimeMin, Integer prepTimeMax) {
         log.info("Searching recipes by name: {}", name);
 
-        List<Recipe> recipes = recipeRepository.findByNameContainingIgnoreCase(name);
-        return recipes.stream()
-                .map(this::convertToSummaryDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<RecipeSummaryDTO> getRecipesByPrepTime(Integer minTime, Integer maxTime) {
-        log.info("Retrieving recipes with prep time between {} and {} minutes", minTime, maxTime);
-
-        List<Recipe> recipes = recipeRepository.findByPrepTimeBetween(minTime, maxTime);
+        List<Recipe> recipes = recipeRepository.findByNameContainingIgnoreCase(name == null || name.isEmpty() ? "null" : name,name == null || name.isEmpty(), prepTimeMin, prepTimeMax);
         return recipes.stream()
                 .map(this::convertToSummaryDTO)
                 .collect(Collectors.toList());

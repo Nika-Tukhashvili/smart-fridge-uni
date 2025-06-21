@@ -26,7 +26,6 @@ public class RecipeRecommendationService {
 
     private final RecipeRepository recipeRepository;
     private final FoodItemService foodItemService;
-    private final RecipeService recipeService;
 
     @Transactional(readOnly = true)
     public RecommendationResponseDTO getRecipeRecommendations(Double minMatchPercentage, Boolean canMakeOnly) {
@@ -72,21 +71,6 @@ public class RecipeRecommendationService {
                 recommendations.size(), allRecipes.size());
 
         return response;
-    }
-
-    @Transactional(readOnly = true)
-    public List<RecipeRecommendationDTO> getRecipesForIngredient(String ingredientName) {
-        log.info("Finding recipes that use ingredient: {}", ingredientName);
-
-        List<String> ingredientList = Collections.singletonList(ingredientName.toLowerCase());
-        List<Recipe> matchingRecipes = recipeRepository.findRecipesWithAvailableIngredients(ingredientList);
-
-        Set<String> availableIngredients = Set.of(ingredientName.toLowerCase());
-
-        return matchingRecipes.stream()
-                .map(recipe -> calculateRecipeMatch(recipe, availableIngredients))
-                .sorted((r1, r2) -> Double.compare(r2.getMatchPercentage(), r1.getMatchPercentage()))
-                .collect(Collectors.toList());
     }
 
     private RecipeRecommendationDTO calculateRecipeMatch(Recipe recipe, Set<String> availableIngredientNames) {

@@ -59,15 +59,7 @@ public class RecipeController {
         log.info("Received request to get all recipes (search: {}, minPrepTime: {}, maxPrepTime: {})",
                 search, minPrepTime, maxPrepTime);
 
-        List<RecipeSummaryDTO> recipes;
-
-        if (search != null && !search.trim().isEmpty()) {
-            recipes = recipeService.searchRecipes(search);
-        } else if (minPrepTime != null && maxPrepTime != null) {
-            recipes = recipeService.getRecipesByPrepTime(minPrepTime, maxPrepTime);
-        } else {
-            recipes = recipeService.getAllRecipesSummary();
-        }
+        List<RecipeSummaryDTO> recipes = recipeService.searchRecipes(search, minPrepTime, maxPrepTime);
 
         ApiResponseDTO<List<RecipeSummaryDTO>> response = ApiResponseDTO.success(recipes);
         return ResponseEntity.ok(response);

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres:15-alpine
+    container_name: smart-fridge-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smart_fridge_db
+      POSTGRES_USER: smart_fridge_user
+      POSTGRES_PASSWORD: smart_fridge_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smart_fridge_user -d smart_fridge_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local

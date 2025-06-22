@@ -9,10 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,21 +25,15 @@ public class RecipeIngredient {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", nullable = false)
+    @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    @NotBlank(message = "Ingredient name is required")
-    @Size(max = 100, message = "Ingredient name cannot exceed 100 characters")
-    @Column(name = "ingredient_name", nullable = false, length = 100)
+    @Column(name = "ingredient_name")
     private String ingredientName;
 
-    @NotNull(message = "Required quantity is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Required quantity must be greater than 0")
-    @Column(name = "required_quantity", nullable = false)
+    @Column(name = "required_quantity")
     private Double requiredQuantity;
 
-    @NotBlank(message = "Unit is required")
-    @Size(max = 20, message = "Unit cannot exceed 20 characters")
-    @Column(nullable = false, length = 20)
+    @Column(name = "unit")
     private String unit;
 }

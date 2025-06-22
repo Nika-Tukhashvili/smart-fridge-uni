@@ -31,7 +31,6 @@ public class ExpirationTrackingService {
                 log.info("No expired items found");
             }
 
-            // Also check items expiring soon (within 2 days)
             List<FoodItemDTO> expiringSoonItems = foodItemService.getItemsExpiringWithinDays(2);
 
             if (!expiringSoonItems.isEmpty()) {

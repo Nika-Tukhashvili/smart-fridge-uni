@@ -9,10 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,31 +29,23 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Recipe name is required")
-    @Size(max = 150, message = "Recipe name cannot exceed 150 characters")
-    @Column(nullable = false, length = 150)
+    @Column(name = "name")
     private String name;
 
-    @Size(max = 500, message = "Description cannot exceed 500 characters")
-    @Column(length = 500)
+    @Column(name = "description", length = 500)
     private String description;
 
-    @NotBlank(message = "Instructions are required")
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "instructions")
     private String instructions;
 
-    @NotNull(message = "Preparation time is required")
-    @Min(value = 1, message = "Preparation time must be at least 1 minute")
-    @Column(name = "prep_time", nullable = false)
+    @Column(name = "prep_time")
     private Integer prepTime;
 
-    @NotNull(message = "Number of servings is required")
-    @Min(value = 1, message = "Servings must be at least 1")
-    @Column(nullable = false)
+    @Column(name = "servings")
     private Integer servings;
 
     @CreationTimestamp
-    @Column(name = "created_date", nullable = false, updatable = false)
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

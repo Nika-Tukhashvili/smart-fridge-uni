@@ -36,25 +36,20 @@ public class RecipeRecommendationService {
             throw new CustomException("Minimum match percentage must be between 0 and 100");
         }
 
-        // Get available non-expired ingredients
         List<FoodItemDTO> availableFoodItems = foodItemService.getNonExpiredItems();
         List<AvailableIngredientDTO> availableIngredients = availableFoodItems.stream()
                 .map(this::convertToAvailableIngredient)
                 .collect(Collectors.toList());
 
-        // Create a map of available ingredient names for quick lookup
         Set<String> availableIngredientNames = availableFoodItems.stream()
                 .map(item -> item.getName().toLowerCase())
                 .collect(Collectors.toSet());
 
-        // Get all recipes
         List<Recipe> allRecipes = recipeRepository.findAll();
 
-        // Calculate recommendations for each recipe
         List<RecipeRecommendationDTO> recommendations = allRecipes.stream()
                 .map(recipe -> calculateRecipeMatch(recipe, availableIngredientNames))
                 .filter(recommendation -> {
-                    // Apply filters
                     boolean matchesMinPercentage = minMatchPercentage == null ||
                             recommendation.getMatchPercentage() >= minMatchPercentage;
                     boolean matchesCanMakeFilter = canMakeOnly == null || !canMakeOnly ||

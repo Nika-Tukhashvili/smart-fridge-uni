@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +61,6 @@ public class RecipeService {
 
         return recipeRepository.findById(id)
                 .map(existingRecipe -> {
-                    // Update basic fields
                     existingRecipe.setName(recipeDTO.getName());
                     existingRecipe.setDescription(recipeDTO.getDescription());
                     existingRecipe.setInstructions(recipeDTO.getInstructions());

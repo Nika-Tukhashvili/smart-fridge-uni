@@ -1,23 +1,30 @@
 package org.example.smartfridgeuni.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.smartfridgeuni.model.dto.FoodItemDTO;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class NotificationService {
 
+    @Value("${notification.email.to}")
+    private String toEmail;
+
+    private final EmailService emailService;
+
+    @Async
     public void sendExpiredItemsNotification(List<FoodItemDTO> expiredItems) {
         log.info("Sending notification for {} expired items", expiredItems.size());
 
-        // In a real application, you would implement email/SMS/push notification logic here
-        // For now, we'll just log the notification
-
         StringBuilder message = new StringBuilder();
-        message.append("⚠️ EXPIRED ITEMS ALERT ⚠️\n\n");
+        String subject = "⚠️ EXPIRED ITEMS ALERT ⚠️";
         message.append("The following items in your smart fridge have expired:\n\n");
 
         for (FoodItemDTO item : expiredItems) {
@@ -32,18 +39,14 @@ public class NotificationService {
 
         log.warn("NOTIFICATION: {}", message);
 
-        // TODO: Implement actual notification sending (email, SMS, push notification)
-        // Examples:
-        // - emailService.sendEmail(userEmail, "Expired Items Alert", message.toString());
-        // - smsService.sendSMS(userPhone, message.toString());
-        // - pushNotificationService.send(userId, "Expired Items", message.toString());
+        emailService.sendEmail(toEmail, subject, message.toString());
     }
 
     public void sendExpiringSoonNotification(List<FoodItemDTO> expiringSoonItems) {
         log.info("Sending notification for {} items expiring soon", expiringSoonItems.size());
 
         StringBuilder message = new StringBuilder();
-        message.append("🔔 EXPIRATION WARNING 🔔\n\n");
+        String subject = "🔔 EXPIRATION WARNING 🔔";
         message.append("The following items will expire soon:\n\n");
 
         for (FoodItemDTO item : expiringSoonItems) {
@@ -61,8 +64,8 @@ public class NotificationService {
 
         message.append("\nConsider using these items soon!");
 
-        log.info("NOTIFICATION: {}", message.toString());
+        log.info("NOTIFICATION: {}", message);
 
-        // TODO: Implement actual notification sending
+        emailService.sendEmail(toEmail, subject, message.toString());
     }
 }

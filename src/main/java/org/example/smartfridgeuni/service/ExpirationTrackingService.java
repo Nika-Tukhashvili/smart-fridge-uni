@@ -20,7 +20,7 @@ public class ExpirationTrackingService {
     /**
      * Scheduled task to check for expired items every day at 8:00 AM
      */
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = "0 32 22 * * *", zone = "Asia/Tbilisi")
     public void checkExpiredItems() {
         log.info("Running scheduled task to check for expired items");
 

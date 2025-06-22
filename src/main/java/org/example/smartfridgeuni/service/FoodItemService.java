@@ -3,6 +3,7 @@ package org.example.smartfridgeuni.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.smartfridgeuni.model.dto.FoodItemDTO;
+import org.example.smartfridgeuni.model.dto.FoodItemRequest;
 import org.example.smartfridgeuni.model.entity.FoodItem;
 import org.example.smartfridgeuni.repository.FoodItemRepository;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class FoodItemService {
     private final FoodItemRepository foodItemRepository;
 
     @Transactional
-    public FoodItemDTO addFoodItem(FoodItemDTO foodItemDTO) {
+    public FoodItemDTO addFoodItem(FoodItemRequest foodItemDTO) {
         log.info("Adding new food item: {}", foodItemDTO.getName());
 
         FoodItem foodItem = convertToEntity(foodItemDTO);
@@ -64,7 +65,7 @@ public class FoodItemService {
     }
 
     @Transactional
-    public Optional<FoodItemDTO> updateFoodItem(Long id, FoodItemDTO foodItemDTO) {
+    public Optional<FoodItemDTO> updateFoodItem(Long id, FoodItemRequest foodItemDTO) {
         log.info("Updating food item with ID: {}", id);
 
         return foodItemRepository.findById(id)
@@ -153,7 +154,7 @@ public class FoodItemService {
         return dto;
     }
 
-    private FoodItem convertToEntity(FoodItemDTO dto) {
+    private FoodItem convertToEntity(FoodItemRequest dto) {
         FoodItem foodItem = new FoodItem();
         foodItem.setName(dto.getName());
         foodItem.setCategory(dto.getCategory());

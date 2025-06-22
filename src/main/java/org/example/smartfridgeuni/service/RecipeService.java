@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.smartfridgeuni.model.dto.RecipeDTO;
 import org.example.smartfridgeuni.model.dto.RecipeIngredientDTO;
+import org.example.smartfridgeuni.model.dto.RecipeRequest;
 import org.example.smartfridgeuni.model.dto.RecipeSummaryDTO;
 import org.example.smartfridgeuni.model.entity.Recipe;
 import org.example.smartfridgeuni.model.entity.RecipeIngredient;
@@ -23,7 +24,7 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
 
     @Transactional
-    public RecipeDTO addRecipe(RecipeDTO recipeDTO) {
+    public RecipeDTO addRecipe(RecipeRequest recipeDTO) {
         log.info("Adding new recipe: {}", recipeDTO.getName());
 
         Recipe recipe = convertToEntity(recipeDTO);
@@ -56,7 +57,7 @@ public class RecipeService {
     }
 
     @Transactional
-    public Optional<RecipeDTO> updateRecipe(Long id, RecipeDTO recipeDTO) {
+    public Optional<RecipeDTO> updateRecipe(Long id, RecipeRequest recipeDTO) {
         log.info("Updating recipe with ID: {}", id);
 
         return recipeRepository.findById(id)
@@ -135,7 +136,7 @@ public class RecipeService {
         return dto;
     }
 
-    private Recipe convertToEntity(RecipeDTO dto) {
+    private Recipe convertToEntity(RecipeRequest dto) {
         Recipe recipe = new Recipe();
         recipe.setName(dto.getName());
         recipe.setDescription(dto.getDescription());

@@ -1,7 +1,5 @@
 package org.example.smartfridgeuni.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -9,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.smartfridgeuni.model.dto.ApiResponseDTO;
 import org.example.smartfridgeuni.model.dto.RecipeDTO;
+import org.example.smartfridgeuni.model.dto.RecipeRequest;
 import org.example.smartfridgeuni.model.dto.RecipeSummaryDTO;
 import org.example.smartfridgeuni.service.RecipeService;
 import org.springframework.http.HttpStatus;
@@ -36,9 +35,8 @@ public class RecipeController {
     private final RecipeService recipeService;
 
     @PostMapping
-    @Operation(summary = "Add a new recipe", description = "Create a new recipe with ingredients")
     public ResponseEntity<ApiResponseDTO<RecipeDTO>> addRecipe(
-            @Valid @RequestBody RecipeDTO recipeDTO) {
+            @Valid @RequestBody RecipeRequest recipeDTO) {
 
         log.info("Received request to add recipe: {}", recipeDTO.getName());
 
@@ -50,11 +48,10 @@ public class RecipeController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all recipes", description = "Retrieve all recipes (summary view)")
     public ResponseEntity<ApiResponseDTO<List<RecipeSummaryDTO>>> getAllRecipes(
-            @Parameter(description = "Search by recipe name") @RequestParam(required = false) String search,
-            @Parameter(description = "Minimum preparation time") @RequestParam(required = false) Integer minPrepTime,
-            @Parameter(description = "Maximum preparation time") @RequestParam(required = false) Integer maxPrepTime) {
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer minPrepTime,
+            @RequestParam(required = false) Integer maxPrepTime) {
 
         log.info("Received request to get all recipes (search: {}, minPrepTime: {}, maxPrepTime: {})",
                 search, minPrepTime, maxPrepTime);
@@ -66,9 +63,7 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get recipe by ID", description = "Retrieve a specific recipe with full details including ingredients")
-    public ResponseEntity<ApiResponseDTO<RecipeDTO>> getRecipeById(
-            @Parameter(description = "Recipe ID") @PathVariable Long id) {
+    public ResponseEntity<ApiResponseDTO<RecipeDTO>> getRecipeById(@PathVariable Long id) {
 
         log.info("Received request to get recipe with ID: {}", id);
 
@@ -83,10 +78,9 @@ public class RecipeController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update recipe", description = "Update an existing recipe")
     public ResponseEntity<ApiResponseDTO<RecipeDTO>> updateRecipe(
-            @Parameter(description = "Recipe ID") @PathVariable Long id,
-            @Valid @RequestBody RecipeDTO recipeDTO) {
+            @PathVariable Long id,
+            @Valid @RequestBody RecipeRequest recipeDTO) {
 
         log.info("Received request to update recipe with ID: {}", id);
 
@@ -102,9 +96,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete recipe", description = "Remove a recipe")
-    public ResponseEntity<ApiResponseDTO<String>> deleteRecipe(
-            @Parameter(description = "Recipe ID") @PathVariable Long id) {
+    public ResponseEntity<ApiResponseDTO<String>> deleteRecipe(@PathVariable Long id) {
 
         log.info("Received request to delete recipe with ID: {}", id);
 

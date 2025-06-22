@@ -1,3 +1,6 @@
+server:
+  port: 8090
+
 spring:
   application:
     name: smart-fridge-api
@@ -17,9 +20,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     open-in-view: false
-
-server:
-  port: 8090
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL}
+    password: ${APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:
@@ -36,3 +47,8 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+
+notification:
+  email:
+    from: nik.tukhashvili@makingscience.com
+    to: n_tukhashvili4@cu.edu.ge

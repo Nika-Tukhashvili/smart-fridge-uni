@@ -1,6 +1,5 @@
 package org.example.smartfridgeuni.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.smartfridgeuni.model.dto.ApiResponseDTO;
 import org.example.smartfridgeuni.model.dto.FoodItemDTO;
+import org.example.smartfridgeuni.model.dto.FoodItemRequest;
 import org.example.smartfridgeuni.service.FoodItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +35,8 @@ public class FoodItemController {
     private final FoodItemService foodItemService;
 
     @PostMapping
-    @Operation(summary = "Add a new food item", description = "Add a new food item to the smart fridge")
     public ResponseEntity<ApiResponseDTO<FoodItemDTO>> addFoodItem(
-            @Valid @RequestBody FoodItemDTO foodItemDTO) {
+            @Valid @RequestBody FoodItemRequest foodItemDTO) {
 
         log.info("Received request to add food item: {}", foodItemDTO.getName());
 
@@ -49,7 +48,6 @@ public class FoodItemController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all food items", description = "Retrieve all food items from the smart fridge")
     public ResponseEntity<ApiResponseDTO<List<FoodItemDTO>>> getAllFoodItems(
             @Parameter(description = "Filter by category") @RequestParam(required = false) String category,
             @Parameter(description = "Search by name") @RequestParam(required = false) String search) {
@@ -71,9 +69,7 @@ public class FoodItemController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get food item by ID", description = "Retrieve a specific food item by its ID")
-    public ResponseEntity<ApiResponseDTO<FoodItemDTO>> getFoodItemById(
-            @Parameter(description = "Food item ID") @PathVariable Long id) {
+    public ResponseEntity<ApiResponseDTO<FoodItemDTO>> getFoodItemById(@PathVariable Long id) {
 
         log.info("Received request to get food item with ID: {}", id);
 
@@ -88,10 +84,9 @@ public class FoodItemController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update food item", description = "Update an existing food item")
     public ResponseEntity<ApiResponseDTO<FoodItemDTO>> updateFoodItem(
-            @Parameter(description = "Food item ID") @PathVariable Long id,
-            @Valid @RequestBody FoodItemDTO foodItemDTO) {
+            @PathVariable Long id,
+            @Valid @RequestBody FoodItemRequest foodItemDTO) {
 
         log.info("Received request to update food item with ID: {}", id);
 
@@ -107,9 +102,7 @@ public class FoodItemController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete food item", description = "Remove a food item from the smart fridge")
-    public ResponseEntity<ApiResponseDTO<String>> deleteFoodItem(
-            @Parameter(description = "Food item ID") @PathVariable Long id) {
+    public ResponseEntity<ApiResponseDTO<String>> deleteFoodItem(@PathVariable Long id) {
 
         log.info("Received request to delete food item with ID: {}", id);
 
@@ -125,7 +118,6 @@ public class FoodItemController {
     }
 
     @GetMapping("/expired")
-    @Operation(summary = "Get expired items", description = "Retrieve all expired food items")
     public ResponseEntity<ApiResponseDTO<List<FoodItemDTO>>> getExpiredItems() {
 
         log.info("Received request to get expired items");
@@ -137,10 +129,7 @@ public class FoodItemController {
     }
 
     @GetMapping("/expiring-soon")
-    @Operation(summary = "Get items expiring soon", description = "Retrieve items expiring within specified days")
-    public ResponseEntity<ApiResponseDTO<List<FoodItemDTO>>> getItemsExpiringSoon(
-            @Parameter(description = "Number of days to check ahead")
-            @RequestParam(defaultValue = "3") int days) {
+    public ResponseEntity<ApiResponseDTO<List<FoodItemDTO>>> getItemsExpiringSoon(@RequestParam(defaultValue = "3") int days) {
 
         log.info("Received request to get items expiring within {} days", days);
 

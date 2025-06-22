@@ -2,10 +2,12 @@ package org.example.smartfridgeuni.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.smartfridgeuni.exception.CustomException;
 import org.example.smartfridgeuni.model.dto.FoodItemDTO;
 import org.example.smartfridgeuni.model.dto.FoodItemRequest;
 import org.example.smartfridgeuni.model.entity.FoodItem;
 import org.example.smartfridgeuni.repository.FoodItemRepository;
+import org.example.smartfridgeuni.util.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,29 +45,28 @@ public class FoodItemService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<FoodItemDTO> getFoodItemById(Long id) {
+    public FoodItemDTO getFoodItemById(Long id) {
         log.info("Retrieving food item with ID: {}", id);
 
         return foodItemRepository.findById(id)
-                .map(this::convertToDTO);
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new CustomException("Food item with ID " + id + " not found"));
     }
 
     @Transactional
-    public boolean deleteFoodItem(Long id) {
+    public void deleteFoodItem(Long id) {
         log.info("Attempting to delete food item with ID: {}", id);
 
         if (foodItemRepository.existsById(id)) {
             foodItemRepository.deleteById(id);
             log.info("Successfully deleted food item with ID: {}", id);
-            return true;
+        } else {
+            throw new CustomException("Food item with ID " + id + " not found");
         }
-
-        log.warn("Food item with ID {} not found for deletion", id);
-        return false;
     }
 
     @Transactional
-    public Optional<FoodItemDTO> updateFoodItem(Long id, FoodItemRequest foodItemDTO) {
+    public FoodItemDTO updateFoodItem(Long id, FoodItemRequest foodItemDTO) {
         log.info("Updating food item with ID: {}", id);
 
         return foodItemRepository.findById(id)
@@ -79,7 +80,7 @@ public class FoodItemService {
                     FoodItem updatedItem = foodItemRepository.save(existingItem);
                     log.info("Successfully updated food item with ID: {}", id);
                     return convertToDTO(updatedItem);
-                });
+                }).orElseThrow(() -> new CustomException("Food item with ID " + id + " not found"));
     }
 
     @Transactional(readOnly = true)
@@ -96,7 +97,11 @@ public class FoodItemService {
     public List<FoodItemDTO> getItemsExpiringWithinDays(int days) {
         log.info("Retrieving items expiring within {} days", days);
 
-        LocalDate targetDate = LocalDate.now().plusDays(days);
+        if (days < 1 || days > 30) {
+            throw new CustomException("Days must be between 1 and 30");
+        }
+
+        LocalDate targetDate = LocalDate.now(DateUtils.ASIA_TBILISI).plusDays(days);
         List<FoodItem> expiringItems = foodItemRepository.findItemsExpiringBefore(targetDate);
 
         return expiringItems.stream()
@@ -134,12 +139,6 @@ public class FoodItemService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public long getExpiredItemsCount() {
-        return foodItemRepository.countExpiredItems();
-    }
-
-    // Helper methods for conversion
     private FoodItemDTO convertToDTO(FoodItem foodItem) {
         FoodItemDTO dto = new FoodItemDTO();
         dto.setId(foodItem.getId());

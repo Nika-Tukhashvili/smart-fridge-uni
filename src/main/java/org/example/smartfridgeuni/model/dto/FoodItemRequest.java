@@ -1,6 +1,7 @@
 package org.example.smartfridgeuni.model.dto;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -29,6 +30,7 @@ public class FoodItemRequest {
     private String unit;
 
     @NotNull(message = "Expiration date is required")
+    @Future(message = "Expiration date must be in the future")
     private LocalDate expirationDate;
 
 }

@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-    // Find recipes by name (case-insensitive, partial match)
     @Query("SELECT r FROM Recipe r WHERE (:nameNull is true OR LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND (:prepTimeMin is null or r.prepTime >= :prepTimeMin) AND (:prepTimeMax is null or r.prepTime <= :prepTimeMax)")
     List<Recipe> findByNameContainingIgnoreCase(@Param("name") String name, @Param("nameNull") Boolean nameNull, @Param("prepTimeMin") Integer prepTimeMin, @Param("prepTimeMax") Integer prepTimeMax);
 

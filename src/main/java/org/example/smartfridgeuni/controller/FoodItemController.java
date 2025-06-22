@@ -2,7 +2,6 @@ package org.example.smartfridgeuni.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/food-items")
@@ -73,14 +71,10 @@ public class FoodItemController {
 
         log.info("Received request to get food item with ID: {}", id);
 
-        Optional<FoodItemDTO> foodItem = foodItemService.getFoodItemById(id);
+        FoodItemDTO foodItem = foodItemService.getFoodItemById(id);
 
-        if (foodItem.isPresent()) {
-            ApiResponseDTO<FoodItemDTO> response = ApiResponseDTO.success(foodItem.get());
-            return ResponseEntity.ok(response);
-        } else {
-            throw new EntityNotFoundException("Food item with ID " + id + " not found");
-        }
+        ApiResponseDTO<FoodItemDTO> response = ApiResponseDTO.success(foodItem);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
@@ -90,15 +84,11 @@ public class FoodItemController {
 
         log.info("Received request to update food item with ID: {}", id);
 
-        Optional<FoodItemDTO> updatedItem = foodItemService.updateFoodItem(id, foodItemDTO);
+        FoodItemDTO updatedItem = foodItemService.updateFoodItem(id, foodItemDTO);
 
-        if (updatedItem.isPresent()) {
-            ApiResponseDTO<FoodItemDTO> response = ApiResponseDTO.success(
-                    "Food item updated successfully", updatedItem.get());
-            return ResponseEntity.ok(response);
-        } else {
-            throw new EntityNotFoundException("Food item with ID " + id + " not found");
-        }
+        ApiResponseDTO<FoodItemDTO> response = ApiResponseDTO.success(
+                "Food item updated successfully", updatedItem);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
@@ -106,15 +96,12 @@ public class FoodItemController {
 
         log.info("Received request to delete food item with ID: {}", id);
 
-        boolean deleted = foodItemService.deleteFoodItem(id);
+        foodItemService.deleteFoodItem(id);
 
-        if (deleted) {
-            ApiResponseDTO<String> response = ApiResponseDTO.success(
-                    "Food item deleted successfully", "Item with ID " + id + " has been removed");
-            return ResponseEntity.ok(response);
-        } else {
-            throw new EntityNotFoundException("Food item with ID " + id + " not found");
-        }
+        ApiResponseDTO<String> response = ApiResponseDTO.success(
+                "Food item deleted successfully", "Item with ID " + id + " has been removed");
+        return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/expired")
@@ -132,10 +119,6 @@ public class FoodItemController {
     public ResponseEntity<ApiResponseDTO<List<FoodItemDTO>>> getItemsExpiringSoon(@RequestParam(defaultValue = "3") int days) {
 
         log.info("Received request to get items expiring within {} days", days);
-
-        if (days < 1 || days > 30) {
-            throw new IllegalArgumentException("Days must be between 1 and 30");
-        }
 
         List<FoodItemDTO> expiringSoonItems = foodItemService.getItemsExpiringWithinDays(days);
         ApiResponseDTO<List<FoodItemDTO>> response = ApiResponseDTO.success(expiringSoonItems);

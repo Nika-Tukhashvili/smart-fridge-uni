@@ -2,6 +2,7 @@ package org.example.smartfridgeuni.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.smartfridgeuni.exception.CustomException;
 import org.example.smartfridgeuni.model.dto.RecipeDTO;
 import org.example.smartfridgeuni.model.dto.RecipeIngredientDTO;
 import org.example.smartfridgeuni.model.dto.RecipeRequest;
@@ -35,29 +36,28 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<RecipeDTO> getRecipeById(Long id) {
+    public RecipeDTO getRecipeById(Long id) {
         log.info("Retrieving recipe with ID: {}", id);
 
         return recipeRepository.findById(id)
-                .map(this::convertToDTO);
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new CustomException("Recipe with ID " + id + " not found"));
     }
 
     @Transactional
-    public boolean deleteRecipe(Long id) {
+    public void deleteRecipe(Long id) {
         log.info("Attempting to delete recipe with ID: {}", id);
 
         if (recipeRepository.existsById(id)) {
             recipeRepository.deleteById(id);
             log.info("Successfully deleted recipe with ID: {}", id);
-            return true;
+        } else {
+            throw new CustomException("Recipe with ID " + id + " not found");
         }
-
-        log.warn("Recipe with ID {} not found for deletion", id);
-        return false;
     }
 
     @Transactional
-    public Optional<RecipeDTO> updateRecipe(Long id, RecipeRequest recipeDTO) {
+    public RecipeDTO updateRecipe(Long id, RecipeRequest recipeDTO) {
         log.info("Updating recipe with ID: {}", id);
 
         return recipeRepository.findById(id)
@@ -69,7 +69,6 @@ public class RecipeService {
                     existingRecipe.setPrepTime(recipeDTO.getPrepTime());
                     existingRecipe.setServings(recipeDTO.getServings());
 
-                    // Clear existing ingredients and add new ones
                     existingRecipe.getIngredients().clear();
 
                     for (RecipeIngredientDTO ingredientDTO : recipeDTO.getIngredients()) {
@@ -83,7 +82,7 @@ public class RecipeService {
                     Recipe updatedRecipe = recipeRepository.save(existingRecipe);
                     log.info("Successfully updated recipe with ID: {}", id);
                     return convertToDTO(updatedRecipe);
-                });
+                }).orElseThrow(() -> new CustomException("Recipe with ID " + id + " not found"));
     }
 
     @Transactional(readOnly = true)
@@ -96,7 +95,6 @@ public class RecipeService {
                 .collect(Collectors.toList());
     }
 
-    // Helper methods for conversion
     private RecipeDTO convertToDTO(Recipe recipe) {
         RecipeDTO dto = new RecipeDTO();
         dto.setId(recipe.getId());
@@ -144,7 +142,6 @@ public class RecipeService {
         recipe.setPrepTime(dto.getPrepTime());
         recipe.setServings(dto.getServings());
 
-        // Add ingredients
         for (RecipeIngredientDTO ingredientDTO : dto.getIngredients()) {
             RecipeIngredient ingredient = new RecipeIngredient();
             ingredient.setIngredientName(ingredientDTO.getIngredientName());

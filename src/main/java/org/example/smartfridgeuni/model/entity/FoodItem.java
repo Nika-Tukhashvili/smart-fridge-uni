@@ -16,7 +16,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import org.example.smartfridgeuni.util.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,20 +57,18 @@ public class FoodItem {
     @Column(name = "expiration_date", nullable = false)
     private LocalDate expirationDate;
 
-    @CreationTimestamp
     @Column(name = "added_date", nullable = false, updatable = false)
-    private LocalDateTime addedDate;
+    private LocalDateTime addedDate = LocalDateTime.now(DateUtils.ASIA_TBILISI);
 
     // Computed property - not stored in database
     @Transient
     public boolean isExpired() {
-        return expirationDate.isBefore(LocalDate.now());
+        return expirationDate.isBefore(LocalDate.now(DateUtils.ASIA_TBILISI));
     }
 
-    // Helper method to get days until expiration
     @Transient
     public long getDaysUntilExpiration() {
-        return LocalDate.now().until(expirationDate).getDays();
+        return LocalDate.now(DateUtils.ASIA_TBILISI).until(expirationDate).getDays();
     }
 }
 

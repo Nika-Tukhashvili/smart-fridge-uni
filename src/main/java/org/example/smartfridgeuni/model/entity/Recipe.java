@@ -63,15 +63,9 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
-    // Helper method to add ingredient
     public void addIngredient(RecipeIngredient ingredient) {
         ingredients.add(ingredient);
         ingredient.setRecipe(this);
     }
 
-    // Helper method to remove ingredient
-    public void removeIngredient(RecipeIngredient ingredient) {
-        ingredients.remove(ingredient);
-        ingredient.setRecipe(null);
-    }
 }

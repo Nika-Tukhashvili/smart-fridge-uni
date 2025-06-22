@@ -17,10 +17,7 @@ public class ExpirationTrackingService {
     private final FoodItemService foodItemService;
     private final NotificationService notificationService;
 
-    /**
-     * Scheduled task to check for expired items every day at 8:00 AM
-     */
-    @Scheduled(cron = "0 32 22 * * *", zone = "Asia/Tbilisi")
+    @Scheduled(cron = "0 0 22 * * *", zone = "Asia/Tbilisi")
     public void checkExpiredItems() {
         log.info("Running scheduled task to check for expired items");
 
@@ -47,9 +44,7 @@ public class ExpirationTrackingService {
         }
     }
 
-    /**
-     * Get expiration summary
-     */
+
     public ExpirationSummaryDTO getExpirationSummary() {
         log.info("Generating expiration summary");
 

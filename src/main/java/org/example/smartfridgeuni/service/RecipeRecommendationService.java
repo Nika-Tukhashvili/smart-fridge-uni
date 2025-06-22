@@ -2,6 +2,7 @@ package org.example.smartfridgeuni.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.smartfridgeuni.exception.CustomException;
 import org.example.smartfridgeuni.model.dto.AvailableIngredientDTO;
 import org.example.smartfridgeuni.model.dto.FoodItemDTO;
 import org.example.smartfridgeuni.model.dto.RecipeRecommendationDTO;
@@ -31,6 +32,9 @@ public class RecipeRecommendationService {
     public RecommendationResponseDTO getRecipeRecommendations(Double minMatchPercentage, Boolean canMakeOnly) {
         log.info("Generating recipe recommendations with minMatch: {}%, canMakeOnly: {}",
                 minMatchPercentage, canMakeOnly);
+        if (minMatchPercentage != null && (minMatchPercentage < 0 || minMatchPercentage > 100)) {
+            throw new CustomException("Minimum match percentage must be between 0 and 100");
+        }
 
         // Get available non-expired ingredients
         List<FoodItemDTO> availableFoodItems = foodItemService.getNonExpiredItems();

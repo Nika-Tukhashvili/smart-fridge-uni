@@ -35,10 +35,6 @@ public class RecommendationController {
         log.info("Received request for recipe recommendations (minMatch: {}%, canMakeOnly: {})",
                 minMatch, canMakeOnly);
 
-        if (minMatch != null && (minMatch < 0 || minMatch > 100)) {
-            throw new IllegalArgumentException("Minimum match percentage must be between 0 and 100");
-        }
-
         RecommendationResponseDTO recommendations = recommendationService
                 .getRecipeRecommendations(minMatch, canMakeOnly);
 

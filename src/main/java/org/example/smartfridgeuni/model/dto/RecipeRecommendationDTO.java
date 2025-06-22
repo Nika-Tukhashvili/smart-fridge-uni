@@ -16,5 +16,5 @@ public class RecipeRecommendationDTO {
     private List<String> availableIngredients;
     private List<String> missingIngredients;
     private Boolean canMake;
-    private String recommendation; // "Perfect match", "Good match", "Partial match"
+    private String recommendation;
 }

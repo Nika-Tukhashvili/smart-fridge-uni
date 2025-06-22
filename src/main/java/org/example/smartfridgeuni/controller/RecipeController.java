@@ -1,7 +1,6 @@
 package org.example.smartfridgeuni.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/recipes")
@@ -67,14 +65,10 @@ public class RecipeController {
 
         log.info("Received request to get recipe with ID: {}", id);
 
-        Optional<RecipeDTO> recipe = recipeService.getRecipeById(id);
+        RecipeDTO recipe = recipeService.getRecipeById(id);
 
-        if (recipe.isPresent()) {
-            ApiResponseDTO<RecipeDTO> response = ApiResponseDTO.success(recipe.get());
-            return ResponseEntity.ok(response);
-        } else {
-            throw new EntityNotFoundException("Recipe with ID " + id + " not found");
-        }
+        ApiResponseDTO<RecipeDTO> response = ApiResponseDTO.success(recipe);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
@@ -84,15 +78,11 @@ public class RecipeController {
 
         log.info("Received request to update recipe with ID: {}", id);
 
-        Optional<RecipeDTO> updatedRecipe = recipeService.updateRecipe(id, recipeDTO);
+        RecipeDTO updatedRecipe = recipeService.updateRecipe(id, recipeDTO);
 
-        if (updatedRecipe.isPresent()) {
-            ApiResponseDTO<RecipeDTO> response = ApiResponseDTO.success(
-                    "Recipe updated successfully", updatedRecipe.get());
-            return ResponseEntity.ok(response);
-        } else {
-            throw new EntityNotFoundException("Recipe with ID " + id + " not found");
-        }
+        ApiResponseDTO<RecipeDTO> response = ApiResponseDTO.success(
+                "Recipe updated successfully", updatedRecipe);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
@@ -100,14 +90,10 @@ public class RecipeController {
 
         log.info("Received request to delete recipe with ID: {}", id);
 
-        boolean deleted = recipeService.deleteRecipe(id);
+        recipeService.deleteRecipe(id);
 
-        if (deleted) {
-            ApiResponseDTO<String> response = ApiResponseDTO.success(
-                    "Recipe deleted successfully", "Recipe with ID " + id + " has been removed");
-            return ResponseEntity.ok(response);
-        } else {
-            throw new EntityNotFoundException("Recipe with ID " + id + " not found");
-        }
+        ApiResponseDTO<String> response = ApiResponseDTO.success(
+                "Recipe deleted successfully", "Recipe with ID " + id + " has been removed");
+        return ResponseEntity.ok(response);
     }
 }
